@@ -256,7 +256,7 @@ You or the server may be running older versions of the game. Press the auto-upda
 #ifndef PRE_RELEASE_DEMO
 // 1.33 - protocol 59
 // 1.4 - protocol 60
-#define PROTOCOL_VERSION 60
+#define PROTOCOL_VERSION 57	// L0 - dumbed it down to 1.0
 #define GAMENAME_STRING     "wolfmp"
 #else
 // the demo uses a different protocol version for independant browsing
@@ -264,9 +264,9 @@ You or the server may be running older versions of the game. Press the auto-upda
 #endif
 
 // NERVE - SMF - wolf multiplayer master servers
-#define UPDATE_SERVER_NAME      "wolfmotd.idsoftware.com"            // 192.246.40.65
+#define UPDATE_SERVER_NAME      "wolfmaster.s4ndmod.com"            // L0 - point to custom master server
 #define MASTER_SERVER_NAME      "wolfmaster.idsoftware.com"
-#define AUTHORIZE_SERVER_NAME   "wolfauthorize.idsoftware.com"
+#define AUTHORIZE_SERVER_NAME   "authorize.rtcwx.com"				// L0 - point to our auth server..
 
 // TTimo: allow override for easy dev/testing..
 // see cons -- update_server=myhost
