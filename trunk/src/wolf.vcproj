@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="wolf"
 	ProjectGUID="{3ACD01D0-DCF1-46A5-A477-7E8524032A02}"
+	RootNamespace="wolf"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -2731,6 +2732,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\wolf.rc"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -2806,6 +2811,10 @@
 			</File>
 			<File
 				RelativePath="renderer\qgl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
@@ -6089,6 +6098,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\win32\qe3.ico"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

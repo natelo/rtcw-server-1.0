@@ -77,6 +77,13 @@ cvar_t  *sv_gameskill;
 
 cvar_t  *sv_showAverageBPS;     // NERVE - SMF - net debugging
 
+// L0 our cvars
+// |-> Projects info
+cvar_t	*project_developer;
+cvar_t	*project_url;
+cvar_t	*project_forums;
+// End
+
 void SVC_GameCompleteStatus( netadr_t from );       // NERVE - SMF
 
 /*

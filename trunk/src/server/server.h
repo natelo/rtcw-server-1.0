@@ -324,7 +324,13 @@ extern cvar_t  *sv_gameskill;
 // done
 
 // TTimo - autodl
-extern cvar_t *sv_dl_maxRate;
+extern cvar_t  *sv_dl_maxRate;
+
+// L0 - our info cvars
+extern cvar_t	*project_developer;
+extern cvar_t	*project_url;
+extern cvar_t	*project_forums;
+// End
 
 
 //===========================================================
