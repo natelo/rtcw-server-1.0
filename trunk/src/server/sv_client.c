@@ -244,10 +244,9 @@ SV_DirectConnect
 A "connect" OOB command has been received
 ==================
 */
-
-#define PB_MESSAGE "PunkBuster Anti-Cheat software must be installed " \
-				   "and Enabled in order to join this server. An updated game patch can be downloaded from " \
-				   "www.castlewolfenstein.com.\n"
+// L0 - custom message but what's the point rly? I should remove this completely...
+#define PB_MESSAGE "Punkbuster is not supported! " \
+				   "Visit rtcwx.com if you need additional info.\n" 
 
 void SV_DirectConnect( netadr_t from ) {
 	char userinfo[MAX_INFO_STRING];
@@ -269,6 +268,11 @@ void SV_DirectConnect( netadr_t from ) {
 	Com_DPrintf( "SVC_DirectConnect ()\n" );
 
 	Q_strncpyz( userinfo, Cmd_Argv( 1 ), sizeof( userinfo ) );
+
+	// L0 - Prevent timescale attack..
+	if (SV_CheckDRDoS(from)) {
+		return;
+	} // End
 
 	// DHM - Nerve :: Update Server allows any protocol to connect
 #ifndef UPDATE_SERVER
@@ -295,7 +299,7 @@ void SV_DirectConnect( netadr_t from ) {
 				  || from.port == cl->netchan.remoteAddress.port ) ) {
 			if ( ( svs.time - cl->lastConnectTime )
 				 < ( sv_reconnectlimit->integer * 1000 ) ) {
-				Com_DPrintf( "%s:reconnect rejected : too soon\n", NET_AdrToString( from ) );
+				Com_DPrintf( "%s:reconnect rejected : too soon\n", NET_AdrToString( from ) );							
 				return;
 			}
 			break;
@@ -1019,6 +1023,7 @@ If we are pure, disconnect the client if they do no meet the following condition
 
 This routine would be a bit simpler with a goto but i abstained
 
+L0 - sv_pure FIXME
 =================
 */
 static void SV_VerifyPaks_f( client_t *cl ) {

@@ -627,6 +627,7 @@ void SV_SpawnServer( char *server, qboolean killBots ) {
 	svs.time += 100;
 
 	if ( sv_pure->integer ) {
+
 		// the server sends these to the clients so they will only
 		// load pk3s also loaded at the server
 		p = FS_LoadedPakChecksums();
@@ -869,7 +870,7 @@ void SV_Init( void ) {
 
 	// L0 our cvars
 	Cvar_Get( "project_developer", "Nate 'L0", CVAR_ROM | CVAR_SERVERINFO );
-	Cvar_Get( "project_url", "http://projects.rtcwx.com/rtcwX", CVAR_ROM | CVAR_SERVERINFO );
+	Cvar_Get( "project_url", "http://projects.rtcwx.com", CVAR_ROM | CVAR_SERVERINFO );
 	Cvar_Get( "project_forums", "http://rtcwx.com", CVAR_ROM | CVAR_SERVERINFO );
 	// end
 
