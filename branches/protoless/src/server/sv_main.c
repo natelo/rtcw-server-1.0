@@ -79,9 +79,16 @@ cvar_t  *sv_showAverageBPS;     // NERVE - SMF - net debugging
 
 // L0 our cvars
 // |-> Projects info
+cvar_t	*project;
 cvar_t	*project_developer;
 cvar_t	*project_url;
 cvar_t	*project_forums;
+// Hostnames
+cvar_t	*sv_customHostnames;
+cvar_t	*sv_hostname56;
+cvar_t	*sv_hostname58;
+cvar_t	*sv_hostname59;
+cvar_t	*sv_hostname60;
 // End
 
 void SVC_GameCompleteStatus( netadr_t from );       // NERVE - SMF
@@ -531,9 +538,11 @@ SVC_Info
 
 Responds with a short info message that should be enough to determine
 if a user is interested in a server to do a full status
+
+L0 : Patched it a little so it's shown in all versions :)
 ================
 */
-void SVC_Info( netadr_t from ) {
+void SVC_Info( netadr_t from, int version, char *hostname ) {
 	int i, count;
 	char    *gamedir;
 	char infostring[MAX_INFO_STRING];
@@ -566,10 +575,13 @@ void SVC_Info( netadr_t from ) {
 
 	// echo back the parameter to status. so servers can use it as a challenge
 	// to prevent timed spoofed reply packets that add ghost servers
-	Info_SetValueForKey( infostring, "challenge", Cmd_Argv( 1 ) );
-
-	Info_SetValueForKey( infostring, "protocol", va( "%i", PROTOCOL_VERSION ) );
-	Info_SetValueForKey( infostring, "hostname", sv_hostname->string );
+	Info_SetValueForKey( infostring, "challenge", Cmd_Argv( 1 ) );	
+	// L0 - version
+	//Info_SetValueForKey( infostring, "protocol", va( "%i", PROTOCOL_VERSION ) );
+	Info_SetValueForKey( infostring, "protocol", va( "%i", version ) );	
+	//Info_SetValueForKey( infostring, "hostname", sv_hostname->string );
+	Info_SetValueForKey( infostring, "hostname", hostname );
+	// end
 	Info_SetValueForKey( infostring, "mapname", sv_mapname->string );
 	Info_SetValueForKey( infostring, "clients", va( "%i", count ) );
 	Info_SetValueForKey( infostring, "sv_maxclients",
@@ -909,8 +921,26 @@ void SV_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
 		// L0 - check for ddos
 		if (SV_CheckDRDoS(from)) {
 			return;
-		} // End
-		SVC_Info( from );
+		} // End	
+
+		// L0 - print it in all versions..
+		//SVC_Info( from );
+		if (sv_customHostnames->integer) {
+			SVC_Info( from, 56, sv_hostname56->string); // Demo
+			SVC_Info( from, 58, sv_hostname58->string); // 1.31
+			SVC_Info( from, 59, sv_hostname59->string); // 1.33
+			SVC_Info( from, 60, sv_hostname60->string); // 1.4
+		// Set hostname the same across all versions if it's not set..
+		} else {
+			SVC_Info( from, 56, sv_hostname->string); // Demo
+			SVC_Info( from, 58, sv_hostname->string); // 1.31
+			SVC_Info( from, 59, sv_hostname->string); // 1.33
+			SVC_Info( from, 60, sv_hostname->string); // 1.4
+		}
+		// Default is 57 (1.0/1.1) version.
+		SVC_Info( from, PROTOCOL_VERSION, sv_hostname->string); // 57 (1.0/1.1)		
+		// End
+
 	} else if ( !Q_stricmp( c,"getchallenge" ) ) {
 		SV_GetChallenge( from );
 	} else if ( !Q_stricmp( c,"connect" ) ) {

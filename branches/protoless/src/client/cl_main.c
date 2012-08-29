@@ -3069,6 +3069,7 @@ static void CL_SetServerInfo( serverInfo_t *server, const char *info, int ping )
 	if ( server ) {
 		if ( info ) {
 			// L0 - print info
+			Q_strncpyz( server->project,Info_ValueForKey( info, "Project" ), MAX_NAME_LENGTH );
 			Q_strncpyz( server->project_developer,Info_ValueForKey( info, "Developer" ), MAX_NAME_LENGTH );
 			Q_strncpyz( server->project_url,Info_ValueForKey( info, "Project url" ), MAX_NAME_LENGTH );
 			Q_strncpyz( server->project_forum,Info_ValueForKey( info, "Project forums" ), MAX_NAME_LENGTH );

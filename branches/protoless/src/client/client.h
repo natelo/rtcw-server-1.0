@@ -260,6 +260,7 @@ typedef struct {
 	char mapName[MAX_NAME_LENGTH];
 	char game[MAX_NAME_LENGTH];
 	// L0 
+	char project[MAX_NAME_LENGTH];
 	char project_developer[MAX_NAME_LENGTH];
 	char project_url[MAX_NAME_LENGTH];
 	char project_forum[MAX_NAME_LENGTH];

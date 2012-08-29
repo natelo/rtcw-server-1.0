@@ -168,8 +168,8 @@ server: CFLAGS := \
 	$(CFLAGSREL) -DBOTLIB -DDEDICATED -DC_ONLY -DDLL_ONLY
 server: LDFLAGS := -m32 -ldl -lm
 server: $(SVOBJS)
-	$(CC) -o wolfxded.x86 $(SVOBJS) $(LDFLAGS)
-	strip -s wolfxded.x86
+	$(CC) -o wolfded.x86 $(SVOBJS) $(LDFLAGS)
+	strip -s wolfded.x86
 server-clean:
 	rm $(SVOBJS) 2> /dev/null ; exit 0
 	
@@ -185,8 +185,8 @@ server-w32: CFLAGS := \
 	-DSPI_SCREENSAVERRUNNING=SPI_SETSCREENSAVERRUNNING
 server-w32: LDFLAGS := -m32 -lwinmm -lgdi32 -lws2_32
 server-w32: $(SVWINOBJS)
-	$(CC) -o wolfxded.exe $(SVWINOBJS) $(LDFLAGS)
-	strip -s wolfxded.exe
+	$(CC) -o wolfded.exe $(SVWINOBJS) $(LDFLAGS)
+	strip -s wolfded.exe
 server-w32-clean:
 	rm $(SVWINOBJS) 2> /dev/null ; exit 0
 
@@ -244,7 +244,7 @@ all:
 test:
 	if [ "$$RTCW_TESTBASE" = "" ]; then \
 	RTCW_TESTBASE=~/Software/rtcw ; fi ; \
-	cp wolfX.x86 "$$RTCW_TESTBASE" ; \
-	cp wolfX.exe "$$RTCW_TESTBASE" ; \
-	cp wolfxded.x86 "$$RTCW_TESTBASE" ; \
-	cp wolfxded.exe "$$RTCW_TESTBASE"
+	cp wolf.x86 "$$RTCW_TESTBASE" ; \
+	cp wolf.exe "$$RTCW_TESTBASE" ; \
+	cp wolfded.x86 "$$RTCW_TESTBASE" ; \
+	cp wolfded.exe "$$RTCW_TESTBASE"
