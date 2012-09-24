@@ -85,7 +85,7 @@ cvar_t	*project_url;
 cvar_t	*project_forums;
 // Hostnames
 cvar_t	*sv_customHostnames;
-cvar_t	*sv_hostname56;
+cvar_t	*sv_hostname50;
 cvar_t	*sv_hostname58;
 cvar_t	*sv_hostname59;
 cvar_t	*sv_hostname60;
@@ -410,9 +410,11 @@ SVC_Status
 Responds with all the info that qplug or qspy can see about the server
 and all connected players.  Used for getting detailed information after
 the simple info query.
+
+L0 : Patched it a little so it's shown in all versions :)
 ================
 */
-void SVC_Status( netadr_t from ) {
+void SVC_Status( netadr_t from, int version, char *hostname ) {
 	char player[1024];
 	char status[MAX_MSGLEN];
 	int i;
@@ -469,6 +471,11 @@ void SVC_Status( netadr_t from ) {
 			statusLength += playerLength;
 		}
 	}
+
+	// L0 - sort versions	
+	Info_SetValueForKey( infostring, "protocol", va( "%i", version ) );		
+	Info_SetValueForKey( infostring, "hostname", hostname );
+	// end
 
 	NET_OutOfBandPrint( NS_SERVER, from, "statusResponse\n%s\n%s", infostring, status );
 }
@@ -542,7 +549,7 @@ if a user is interested in a server to do a full status
 L0 : Patched it a little so it's shown in all versions :)
 ================
 */
-void SVC_Info( netadr_t from, int version, char *hostname ) {
+void SVC_Info( netadr_t from, int version, char *hostname, char *gamename ) {
 	int i, count;
 	char    *gamedir;
 	char infostring[MAX_INFO_STRING];
@@ -608,7 +615,11 @@ void SVC_Info( netadr_t from, int version, char *hostname ) {
 	Info_SetValueForKey( infostring, "friendlyFire", va( "%i", sv_friendlyFire->integer ) );        // NERVE - SMF
 	Info_SetValueForKey( infostring, "maxlives", va( "%i", sv_maxlives->integer ? 1 : 0 ) );        // NERVE - SMF
 	Info_SetValueForKey( infostring, "tourney", va( "%i", sv_tourney->integer ) );              // NERVE - SMF
-	Info_SetValueForKey( infostring, "gamename", GAMENAME_STRING );                               // Arnout: to be able to filter out Quake servers
+
+	// L0 - Filter gamename for master server..
+	//Info_SetValueForKey( infostring, "gamename", GAMENAME_STRING );                               // Arnout: to be able to filter out Quake servers
+	Info_SetValueForKey( infostring, "gamename", gamename );
+	// end
 
 	// TTimo
 	antilag = Cvar_VariableString( "g_antilag" );
@@ -772,7 +783,7 @@ qboolean SV_CheckDRDoS(netadr_t from) {
         }
     }
 
-    if (specificCount >= 6) { // Already sent 6 requests to this IP in last 1.4 second.
+    if (specificCount >= 10) { // Already sent 10 requests to this IP in last 1.4 second.
         Com_Printf("Possible server flood attempt detected (from address %s). Server is ignoring any requests from this address for the next 2 minutes.\n", NET_AdrToString(exactFrom));
         ban = &svs.infoFloodBans[oldestBan];
         ban->adr = from;
@@ -885,6 +896,46 @@ void SVC_RemoteCommand( netadr_t from, msg_t *msg ) {
 
 /*
 =================
+SV_sortVersion
+
+L0 - sort what goes where..
+FIXME: Finish me..
+=================
+*/
+void SV_sortVersion(netadr_t from, int type) {
+	char *msg;
+	
+	// getStatus -> detailed...
+	if (type==1) {
+		if (sv_customHostnames->integer) {	
+			SVC_Status( from, 60, sv_hostname60->string); // 1.4
+			SVC_Status( from, PROTOCOL_VERSION, sv_hostname->string); // 57 (1.0/1.1)				
+		} else {		
+			SVC_Status( from, 60, sv_hostname->string); // 1.4
+			SVC_Status( from, PROTOCOL_VERSION, sv_hostname->string); // 57 (1.0/1.1)	
+		}
+	// getInfo -> requested by master global refresh...
+	} else {
+		if (sv_customHostnames->integer) {			
+			SVC_Info( from, 60, sv_hostname60->string, GAMENAME_STRING); // 1.4 / Spoof data for master server..
+			SVC_Info( from, PROTOCOL_VERSION, sv_hostname->string, GAMENAME_STRING ); // 57 (1.0/1.1) 	
+			
+		} else {					
+			SVC_Info( from, 60, sv_hostname->string, GAMENAME_STRING); // 1.4 / Spoof data for master server..	
+			SVC_Info( from, PROTOCOL_VERSION, sv_hostname->string, GAMENAME_STRING); // 57 (1.0/1.1)				
+		}		
+	}	
+	msg = (type==0) ? "getInfo" : "getStatus";
+
+Com_DPrintf( "%s requested %s\n", NET_AdrToString( from ), msg );
+}
+
+void fakeHeartbeat(netadr_t from) {
+	SVC_Info( from, 60, sv_hostname60->string, GAMENAME_STRING); // 1.4
+}
+
+/*
+=================
 SV_ConnectionlessPacket
 
 A connectionless packet has four leading 0xff
@@ -916,30 +967,16 @@ void SV_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
 		if (SV_CheckDRDoS(from)) {
 			return; 
 		} // End
-		SVC_Status( from  );
+		
+		SV_sortVersion(from, 1); // L0 - sort version response..
+
 	} else if ( !Q_stricmp( c,"getinfo" ) ) {
 		// L0 - check for ddos
 		if (SV_CheckDRDoS(from)) {
 			return;
 		} // End	
-
-		// L0 - print it in all versions..
-		//SVC_Info( from );
-		if (sv_customHostnames->integer) {
-			SVC_Info( from, 56, sv_hostname56->string); // Demo
-			SVC_Info( from, 58, sv_hostname58->string); // 1.31
-			SVC_Info( from, 59, sv_hostname59->string); // 1.33
-			SVC_Info( from, 60, sv_hostname60->string); // 1.4
-		// Set hostname the same across all versions if it's not set..
-		} else {
-			SVC_Info( from, 56, sv_hostname->string); // Demo
-			SVC_Info( from, 58, sv_hostname->string); // 1.31
-			SVC_Info( from, 59, sv_hostname->string); // 1.33
-			SVC_Info( from, 60, sv_hostname->string); // 1.4
-		}
-		// Default is 57 (1.0/1.1) version.
-		SVC_Info( from, PROTOCOL_VERSION, sv_hostname->string); // 57 (1.0/1.1)		
-		// End
+		
+		SV_sortVersion(from, 0); // L0 - sort version response..
 
 	} else if ( !Q_stricmp( c,"getchallenge" ) ) {
 		SV_GetChallenge( from );

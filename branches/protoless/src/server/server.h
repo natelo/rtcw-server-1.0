@@ -332,7 +332,7 @@ extern cvar_t	*project_developer;
 extern cvar_t	*project_url;
 extern cvar_t	*project_forums;
 extern cvar_t	*sv_customHostnames;
-extern cvar_t	*sv_hostname56;
+extern cvar_t	*sv_hostname50;
 extern cvar_t	*sv_hostname58;
 extern cvar_t	*sv_hostname59;
 extern cvar_t	*sv_hostname60;

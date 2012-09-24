@@ -277,7 +277,7 @@ void SV_DirectConnect( netadr_t from ) {
 	// DHM - Nerve :: Update Server allows any protocol to connect
 #ifndef UPDATE_SERVER
 	version = atoi( Info_ValueForKey( userinfo, "protocol" ) );
-	// L0 (TODO) - protocl version doesn't matter anymore...accept everything.
+	// L0 (TODO) - protocol version doesn't matter anymore...accept everything.
 	// TODO: It still would be wise to hook under user data protocol version or smth so it shows who's coming from where..
 	/*
 	if ( version != PROTOCOL_VERSION ) {
@@ -291,8 +291,7 @@ void SV_DirectConnect( netadr_t from ) {
 		return;
 	}
 	*/	
-	Com_Printf( "Player connected from version: %i\n", version );
-	//trap_SendServerCommand( -1, va( "print \"DOH NEW.\n\"" ) );
+	Com_Printf( "Player connected from version: %i\n", version );	
 	// L0 - End
 #endif
 

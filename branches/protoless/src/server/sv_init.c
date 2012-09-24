@@ -794,11 +794,11 @@ void SV_Init( void ) {
 	sv_maxclients = Cvar_Get( "sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH );               // NERVE - SMF - changed to 20 from 8
 #endif
 
-	sv_maxRate = Cvar_Get( "sv_maxRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO );
+	sv_maxRate = Cvar_Get( "sv_maxRate", "0", CVAR_ARCHIVE );
 	sv_minPing = Cvar_Get( "sv_minPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO );
 	sv_maxPing = Cvar_Get( "sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO );
 	sv_floodProtect = Cvar_Get( "sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO );
-	sv_allowAnonymous = Cvar_Get( "sv_allowAnonymous", "0", CVAR_SERVERINFO );
+	sv_allowAnonymous = Cvar_Get( "sv_allowAnonymous", "0", CVAR_ROM );
 	sv_friendlyFire = Cvar_Get( "g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE );           // NERVE - SMF
 	sv_maxlives = Cvar_Get( "g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO );      // NERVE - SMF
 	sv_tourney = Cvar_Get( "g_noTeamSwitching", "0", CVAR_ARCHIVE );                               // NERVE - SMF
@@ -863,21 +863,21 @@ void SV_Init( void ) {
 	Cvar_Get( "g_fastResMsec", "1000", CVAR_ARCHIVE );
 
 	// ATVI Tracker Wolfenstein Misc #273
-	Cvar_Get( "g_voteFlags", "255", CVAR_ARCHIVE | CVAR_SERVERINFO );
+	Cvar_Get( "g_voteFlags", "255", CVAR_ARCHIVE );
 
 	// ATVI Tracker Wolfenstein Misc #263
 	Cvar_Get( "g_antilag", "0", CVAR_ARCHIVE | CVAR_SERVERINFO );
 
 	// L0 our cvars
-	Cvar_Get( "project", "ProtoLess / Players from all versions @ same spot.", CVAR_ROM | CVAR_SERVERINFO );
+	Cvar_Get( "project", "rtcwX ProtoLess", CVAR_ROM | CVAR_SERVERINFO );
 	Cvar_Get( "project_developer", "Nate 'L0", CVAR_ROM | CVAR_SERVERINFO );
 	Cvar_Get( "project_url", "http://projects.rtcwx.com", CVAR_ROM | CVAR_SERVERINFO );
 	Cvar_Get( "project_forums", "http://rtcwx.com", CVAR_ROM | CVAR_SERVERINFO );
 	sv_customHostnames = Cvar_Get( "sv_customHostnames", "0", CVAR_ARCHIVE );
-	sv_hostname56 = Cvar_Get( "sv_hostname56", "WolfHost", CVAR_SERVERINFO | CVAR_ARCHIVE );
-	sv_hostname58 = Cvar_Get( "sv_hostname58", "WolfHost", CVAR_SERVERINFO | CVAR_ARCHIVE );
-	sv_hostname59 = Cvar_Get( "sv_hostname59", "WolfHost", CVAR_SERVERINFO | CVAR_ARCHIVE );
-	sv_hostname60 = Cvar_Get( "sv_hostname60", "WolfHost", CVAR_SERVERINFO | CVAR_ARCHIVE );
+	sv_hostname50 = Cvar_Get( "sv_hostname50", "WolfHost", CVAR_ARCHIVE );
+	sv_hostname58 = Cvar_Get( "sv_hostname58", "WolfHost", CVAR_ARCHIVE );
+	sv_hostname59 = Cvar_Get( "sv_hostname59", "WolfHost", CVAR_ARCHIVE );
+	sv_hostname60 = Cvar_Get( "sv_hostname60", "WolfHost", CVAR_ARCHIVE );
 	// end
 
 	// TTimo - autodownload speed tweaks
