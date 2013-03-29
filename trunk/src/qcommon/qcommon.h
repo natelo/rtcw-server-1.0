@@ -173,6 +173,7 @@ typedef struct {
 void        NET_Init( void );
 void        NET_Shutdown( void );
 void        NET_Restart( void );
+void        NET_FlushPacketQueue(void);
 void        NET_Config( qboolean enableNetworking );
 
 void        NET_SendPacket( netsrc_t sock, int length, const void *data, netadr_t to );
@@ -187,13 +188,20 @@ qboolean    NET_StringToAdr( const char *s, netadr_t *a );
 qboolean    NET_GetLoopPacket( netsrc_t sock, netadr_t *net_from, msg_t *net_message );
 void        NET_Sleep( int msec );
 
+// L0 - rate boost
+#define NETCHAN_GENCHECKSUM(challenge, sequence) ((challenge) ^ ((sequence) * (challenge)))
 
 //----(SA)	increased for larger submodel entity counts
 #define MAX_MSGLEN              32768       // max length of a message, which may
 //#define	MAX_MSGLEN				16384		// max length of a message, which may
 // be fragmented into multiple packets
-#define MAX_DOWNLOAD_WINDOW         8       // max of eight download frames
-#define MAX_DOWNLOAD_BLKSIZE        2048    // 2048 byte block chunks
+//#define MAX_DOWNLOAD_WINDOW         8       // max of eight download frames
+//#define MAX_DOWNLOAD_BLKSIZE        2048    // 2048 byte block chunks
+
+#define MAX_DOWNLOAD_WINDOW             48      // ACK window of 48 download chunks. Cannot set this higher, or clients
+                                                // will overflow the reliable commands buffer
+#define MAX_DOWNLOAD_BLKSIZE            1024    // 896 byte block chunks
+
 
 
 /*
@@ -223,10 +231,15 @@ typedef struct {
 	int unsentFragmentStart;
 	int unsentLength;
 	byte unsentBuffer[MAX_MSGLEN];
+
+	// L0 - rate boost
+	int	challenge;
+	int lastSentTime;
+	int lastSentSize;
 } netchan_t;
 
 void Netchan_Init( int qport );
-void Netchan_Setup( netsrc_t sock, netchan_t *chan, netadr_t adr, int qport );
+void Netchan_Setup( netsrc_t sock, netchan_t *chan, netadr_t adr, int qport, int challenge );
 
 void Netchan_Transmit( netchan_t *chan, int length, const byte *data );
 void Netchan_TransmitNextFragment( netchan_t *chan );
@@ -442,6 +455,7 @@ char    *Cmd_Cmd( void );
 // if arg > argc, so string operations are allways safe.
 
 void    Cmd_TokenizeString( const char *text );
+void    Cmd_TokenizeStringIgnoreQuotes( const char *text_in );
 // Takes a null terminated string.  Does not need to be /n terminated.
 // breaks the string up into arg tokens.
 
@@ -801,6 +815,17 @@ extern cvar_t  *com_cameraMode;
 extern cvar_t  *cl_paused;
 extern cvar_t  *sv_paused;
 
+// L0 - rate boost
+extern  cvar_t  *cl_packetdelay;
+extern  cvar_t  *sv_packetdelay;
+
+extern  cvar_t  *com_unfocused;
+extern  cvar_t  *com_maxfpsUnfocused;
+extern  cvar_t  *com_minimized;
+extern  cvar_t  *com_maxfpsMinimized;
+extern  cvar_t  *com_busyWait;
+// End
+
 // com_speeds times
 extern int time_game;
 extern int time_frontend;
@@ -959,9 +984,11 @@ void SCR_DebugGraph( float value, int color );   // FIXME: move logging to commo
 //
 void SV_Init( void );
 void SV_Shutdown( char *finalmsg );
+int SV_FrameMsec(void);
 void SV_Frame( int msec );
 void SV_PacketEvent( netadr_t from, msg_t *msg );
 qboolean SV_GameCommand( void );
+int SV_SendQueuedPackets(void);
 
 
 //

@@ -42,6 +42,9 @@ If you have questions concerning this license or the applicable additional terms
 #define NEW_ANIMS
 #define MAX_TEAMNAME    32
 
+// L0 - shuts compiler..
+#define DIRECTINPUT_VERSION  0x0900
+
 // DHM - Nerve
 //#define PRE_RELEASE_DEMO
 
