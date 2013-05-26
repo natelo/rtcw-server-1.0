@@ -57,8 +57,6 @@ cvar_t  *sv_mapname;
 cvar_t  *sv_mapChecksum;
 cvar_t  *sv_serverid;
 cvar_t  *sv_maxRate;
-cvar_t  *sv_minRate;
-cvar_t  *sv_dlRate;
 cvar_t  *sv_minPing;
 cvar_t  *sv_maxPing;
 cvar_t  *sv_gametype;
@@ -70,6 +68,8 @@ cvar_t  *sv_onlyVisibleClients; // DHM - Nerve
 cvar_t  *sv_friendlyFire;       // NERVE - SMF
 cvar_t  *sv_maxlives;           // NERVE - SMF
 cvar_t  *sv_tourney;            // NERVE - SMF
+
+cvar_t *sv_dl_maxRate;
 
 // Rafael gameskill
 cvar_t  *sv_gameskill;
@@ -696,6 +696,12 @@ qboolean SV_CheckDRDoS(netadr_t from) {
     if (from.type == NA_IP) {
         from.ip[3] = 0; // xx.xx.xx.0
     } 
+	// L0 - FIXME - commented out since there's no ipv6 atm..
+	/*
+	else {
+        from.ip6[15] = 0;
+    }
+	*/
 
     // This quick exit strategy while we're being bombarded by getinfo/getstatus requests
     // directed at a specific IP address doesn't really impact server performance.
@@ -1147,30 +1153,6 @@ qboolean SV_CheckPaused( void ) {
 
 /*
 ==================
-L0 - rate boost
-
-SV_FrameMsec
-Return time in millseconds until processing of the next server frame.
-==================
-*/
-int SV_FrameMsec(void)
-{
-	if(sv_fps)
-	{
-		int frameMsec;
-
-		frameMsec = 1000.0f / sv_fps->value;
-
-		if(frameMsec < sv.timeResidual)
-			return 0;
-		else
-			return frameMsec - sv.timeResidual;
-	} else
-		return 1;
-}
-
-/*
-==================
 SV_Frame
 
 Player movement occurs as a result of packet events, which
@@ -1298,134 +1280,6 @@ void SV_Frame( int msec ) {
 
 	// send a heartbeat to the master if needed
 	SV_MasterHeartbeat( HEARTBEAT_GAME );
-}
-
-/******************** L0 - rate boost dump bellow ***********************/
-/*
-====================
-SV_RateMsec
-
-Return the number of msec until another message can be sent to
-a client based on its rate settings
-====================
-*/
-
-#define UDPIP_HEADER_SIZE 28
-#define UDPIP6_HEADER_SIZE 48
-
-int SV_RateMsec(client_t *client)
-{
-	int rate, rateMsec;
-	int messageSize;
-	
-	messageSize = client->netchan.lastSentSize;
-	rate = client->rate;
-
-	if(sv_maxRate->integer)
-	{
-		if(sv_maxRate->integer < 1000)
-			Cvar_Set( "sv_MaxRate", "1000" );
-		if(sv_maxRate->integer < rate)
-			rate = sv_maxRate->integer;
-	}
-
-	if(sv_minRate->integer)
-	{
-		if(sv_minRate->integer < 1000)
-			Cvar_Set("sv_minRate", "1000");
-		if(sv_minRate->integer > rate)
-			rate = sv_minRate->integer;
-	}
-
-	messageSize += UDPIP_HEADER_SIZE;
-		
-	rateMsec = messageSize * 1000 / ((int) (rate * com_timescale->value));
-	rate = Sys_Milliseconds() - client->netchan.lastSentTime;
-	
-	if(rate > rateMsec)
-		return 0;
-	else
-		return rateMsec - rate;
-}
-
-/*
-====================
-SV_SendQueuedPackets
-
-Send download messages and queued packets in the time that we're idle, i.e.
-not computing a server frame or sending client snapshots.
-Return the time in msec until we expect to be called next
-====================
-*/
-
-int SV_SendQueuedPackets()
-{
-	int numBlocks;
-	int dlStart, deltaT, delayT;
-	static int dlNextRound = 0;
-	int timeVal = INT_MAX;
-
-	// Send out fragmented packets now that we're idle
-	delayT = SV_SendQueuedMessages();
-	if(delayT >= 0)
-		timeVal = delayT;
-
-	if(sv_dlRate->integer)
-	{
-		// Rate limiting. This is very imprecise for high
-		// download rates due to millisecond timedelta resolution
-		dlStart = Sys_Milliseconds();
-		deltaT = dlNextRound - dlStart;
-
-		if(deltaT > 0)
-		{
-			if(deltaT < timeVal)
-				timeVal = deltaT + 1;
-		}
-		else
-		{
-			numBlocks = SV_SendDownloadMessages();
-
-			if(numBlocks)
-			{
-				// There are active downloads
-				deltaT = Sys_Milliseconds() - dlStart;
-
-				delayT = 1000 * numBlocks * MAX_DOWNLOAD_BLKSIZE;
-				delayT /= sv_dlRate->integer * 1024;
-
-				if(delayT <= deltaT + 1)
-				{
-					// Sending the last round of download messages
-					// took too long for given rate, don't wait for
-					// next round, but always enforce a 1ms delay
-					// between DL message rounds so we don't hog
-					// all of the bandwidth. This will result in an
-					// effective maximum rate of 1MB/s per user, but the
-					// low download window size limits this anyways.
-					if(timeVal > 2)
-						timeVal = 2;
-
-					dlNextRound = dlStart + deltaT + 1;
-				}
-				else
-				{
-					dlNextRound = dlStart + delayT;
-					delayT -= deltaT;
-
-					if(delayT < timeVal)
-						timeVal = delayT;
-				}
-			}
-		}
-	}
-	else
-	{
-		if(SV_SendDownloadMessages())
-			timeVal = 0;
-	}
-
-	return timeVal;
 }
 
 //============================================================================
