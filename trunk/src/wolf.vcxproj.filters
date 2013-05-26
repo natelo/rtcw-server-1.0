@@ -2,24 +2,24 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{2b8db6ba-b7d4-4b8d-a055-0cb72d578187}</UniqueIdentifier>
+      <UniqueIdentifier>{82434c84-6092-4701-a70a-47d67c9d5479}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{a4cc83bf-46bf-45de-950c-cca9233cb7fa}</UniqueIdentifier>
+      <UniqueIdentifier>{9ed3782f-8192-4880-8f61-133050c7d331}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
     </Filter>
     <Filter Include="main">
-      <UniqueIdentifier>{c4693eb4-2e61-4716-ae5a-cf5c90d9c0c8}</UniqueIdentifier>
+      <UniqueIdentifier>{566d3072-c795-4188-8e90-dadc66aa2041}</UniqueIdentifier>
     </Filter>
     <Filter Include="main\ui">
-      <UniqueIdentifier>{91c43e67-65e9-4548-bff8-2f17df0e39d3}</UniqueIdentifier>
+      <UniqueIdentifier>{ebf04fe6-218c-4cbc-8771-762f8c5cb8a2}</UniqueIdentifier>
     </Filter>
     <Filter Include="main\scripts">
-      <UniqueIdentifier>{5aae5f2b-1b19-44cc-811a-609eb693fb29}</UniqueIdentifier>
+      <UniqueIdentifier>{d3f1f697-c38e-4c5b-b538-198e60cd554a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Misc">
-      <UniqueIdentifier>{417f072e-7d7d-4d7b-84bd-6f0ee49a05d4}</UniqueIdentifier>
+      <UniqueIdentifier>{771086cb-b706-4e48-a8a7-d5caea5ed7f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -180,9 +180,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="win32\win_wndproc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="server\sv_wallhack.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
