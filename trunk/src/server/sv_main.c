@@ -82,6 +82,15 @@ cvar_t  *sv_showAverageBPS;     // NERVE - SMF - net debugging
 cvar_t	*project_developer;
 cvar_t	*project_url;
 cvar_t	*project_forums;
+
+// Anti-Wallhack
+#ifdef FEATURE_ANTICHEAT
+cvar_t *wh_active;
+cvar_t *wh_bbox_horz;
+cvar_t *wh_bbox_vert;
+cvar_t *wh_add_xy;
+cvar_t *wh_check_fov;
+#endif
 // End
 
 void SVC_GameCompleteStatus( netadr_t from );       // NERVE - SMF
