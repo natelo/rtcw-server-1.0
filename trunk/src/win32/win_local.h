@@ -37,6 +37,10 @@ If you have questions concerning this license or the applicable additional terms
 #pragma warning( pop )
 #endif
 
+// L0 - shuts up the compiler...
+#define DIRECTINPUT_VERSION 0x0800 
+// End
+
 #ifdef DOOMSOUND    ///// (SA) DOOMSOUND
 #include "../mssdk/include/dinput.h"
 #include "../mssdk/include/dsound.h"
