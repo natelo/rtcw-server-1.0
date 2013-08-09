@@ -57,11 +57,11 @@ If you have questions concerning this license or the applicable additional terms
 // Heartbeat for dpmaster protocol. You shouldn't change this unless you know what you're doing
   #define HEARTBEAT_FOR_MASTER		"DarkPlaces"
 #else
-  #define PRODUCT_NAME			"rtcw(iox)" 
+  #define PRODUCT_NAME			"rtcw(ioX)" 
   #define OLD_PRODUCT_NAME		"Wolf"
   #define BASEGAME			"main"
   #define CLIENT_WINDOW_TITLE     	"Return To Castle Wolfenstein"
-  #define CLIENT_WINDOW_MIN_TITLE 	"rtcw(iox)"
+  #define CLIENT_WINDOW_MIN_TITLE 	"rtcw(ioX)"
   #define HOMEPATH_NAME_UNIX		".rtcwx"
   #define HOMEPATH_NAME_WIN		"RTCW"
   #define HOMEPATH_NAME_MACOSX		HOMEPATH_NAME_WIN

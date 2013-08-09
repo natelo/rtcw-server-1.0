@@ -1339,6 +1339,8 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 						pak->referenced |= FS_UI_REF;
 
 #if !defined( PRE_RELEASE_DEMO ) && !defined( DO_LIGHT_DEDICATED )
+					// L0 - Not an option in 1.0 ^^
+					/*
 					// DHM -- Nerve :: Don't allow maps to be loaded from pak0 (singleplayer)
 					if(!FS_IsExt(filename, ".bsp", len) == 0 &&
 						Q_stricmp( pak->pakBasename, "pak0" ) == 0 ) {
@@ -1346,6 +1348,7 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
 						*file = 0;
 						return -1;
 					}
+					*/
 #endif
 
 					if(uniqueFILE)
