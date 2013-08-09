@@ -90,7 +90,8 @@ void SV_GetChallenge( netadr_t from ) {
 	}
 
 	// if they are on a lan address, send the challengeResponse immediately
-	if ( Sys_IsLANAddress( from ) ) {
+	// L0 - Authorize server is dead..instantly connect..
+//	if ( Sys_IsLANAddress( from ) ) {
 		challenge->pingTime = svs.time;
 		if ( sv_onlyVisibleClients->integer ) {
 			NET_OutOfBandPrint( NS_SERVER, from, "challengeResponse %i %i", challenge->challenge, sv_onlyVisibleClients->integer );
@@ -98,7 +99,7 @@ void SV_GetChallenge( netadr_t from ) {
 			NET_OutOfBandPrint( NS_SERVER, from, "challengeResponse %i", challenge->challenge );
 		}
 		return;
-	}
+//	}
 
 	// look up the authorize server's IP
 	if ( !svs.authorizeAddress.ip[0] && svs.authorizeAddress.type != NA_BAD ) {
@@ -115,7 +116,7 @@ void SV_GetChallenge( netadr_t from ) {
 	}
 
 	// if they have been challenging for a long time and we
-	// haven't heard anything from the authoirze server, go ahead and
+	// haven't heard anything from the authorize server, go ahead and
 	// let them in, assuming the id server is down
 	if ( svs.time - challenge->firstTime > AUTHORIZE_TIMEOUT ) {
 		Com_DPrintf( "authorize server timed out\n" );
