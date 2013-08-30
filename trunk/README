@@ -1,0 +1,6 @@
+RTCWx 1.0 Binary.
+A downgraded rtcw 1.4 engine with enhancements and bug fixes.
+
+Checkout (svn):
+CLI: svn co --username anonymous http://82.192.42.115:8080/svn/RTCW-1.0/trunk/
+GUI: http://82.192.42.115:8080/svn/RTCW-1.0/trunk/ with Username: anonymous
